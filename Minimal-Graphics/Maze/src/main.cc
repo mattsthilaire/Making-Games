@@ -40,7 +40,7 @@ int main()
     int y = SCREEN_HEIGHT / 2;
 
     Player player(x, y);
-    Map map(SCREEN_WIDTH, SCREEN_HEIGHT, REC_WIDTH, REC_HEIGHT, 0.2);
+    Map map(SCREEN_WIDTH, SCREEN_HEIGHT, REC_WIDTH, REC_HEIGHT, 0.4, false);
 
     bool quit = false;
     SDL_Event e;
@@ -82,6 +82,7 @@ int main()
                 {
                     switch (e.key.keysym.sym)
                     {
+
                     case SDLK_UP:
                         if (player.get_y() == 0 || map.is_wall(std::make_tuple(player.get_x(), player.get_y() - 10)))
                         {
@@ -115,12 +116,24 @@ int main()
                         break;
                     }
                 }
+                else
+                {
+                    if (e.type == SDL_MOUSEBUTTONDOWN)
+                    {
+                        map.swap_show_path();
+                        std::cout << map.get_show_path() << std::endl;
+                    }
+                }
             }
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);
 
             map.fill_map(renderer);
+            if (map.get_show_path())
+            {
+                map.print_fastest_path(renderer, &player);
+            }
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
             SDL_Rect pixel = {player.get_x(), player.get_y(), REC_WIDTH, REC_HEIGHT};
             SDL_RenderFillRect(renderer, &pixel);
